@@ -2235,15 +2235,17 @@ function g3VecAngle(){
 }
 
 /* ---------- จำนวนเชิงซ้อน ---------- */
-function cxH(p,q){ // p + qi (Q)
+function cxR(p,q){ // p + qi (Q) — HTML ดิบ ยังไม่แปลงเป็น KaTeX (ใช้ประกอบในสูตรอื่น)
   var I=V("i");
-  if(q.n===0)return MW(QH(p));
+  if(q.n===0)return QH(p);
   var a=Math.abs(q.n),c=q.d===1?(a===1?"":a)+I:fr(a+"",q.d)+I;
-  if(p.n===0)return MW((q.n<0?MI:"")+c);
-  return MW(QH(p)+(q.n<0?" "+MI+" ":" + ")+c);
+  if(p.n===0)return (q.n<0?MI:"")+c;
+  return QH(p)+(q.n<0?" "+MI+" ":" + ")+c;
 }
+function cxH(p,q){return MW(cxR(p,q));}
 function cxI(a,b){return cxH(Q(a),Q(b));}
-function cxP(a,b){return "("+cxI(a,b).replace(/<\/?span[^>]*>/g,"")+")";}
+function cxIR(a,b){return cxR(Q(a),Q(b));}
+function cxP(a,b){return "("+cxIR(a,b)+")";}
 function Cv(p,q,why){return {t:cxH(p,q),v:[p.v,q.v],why:why};}
 function g3CxMul(){
   var a=riNZ(-4,4),b=riNZ(-4,4),c=riNZ(-4,4),d=riNZ(-4,4);
@@ -2286,14 +2288,14 @@ function g3CxPow(){
 function g3CxMisc(){
   var a=riNZ(-6,6),b=riNZ(-6,6),ask=pick(["mod","zz","conj","re2","im2"]),I=V("i");
   if((a===3&&b===4&&(ask==="mod"||ask==="zz"))||(a===2&&b===-3&&ask==="conj")||(a===1&&b===2&&ask==="re2"))retry();
-  var z=cxI(a,b),s=a*a+b*b,ans,ct,W,pr,ex,topic;
-  if(ask==="mod"){topic="ขนาดของจำนวนเชิงซ้อน |z|";var R=RN(s);ans=R.v;ct=MW(RH(R));pr="จงหาค่าของ "+MW("|"+z.replace(/<\/?span[^>]*>/g,"")+"|");
+  var z=cxIR(a,b),s=a*a+b*b,ans,ct,W,pr,ex,topic;
+  if(ask==="mod"){topic="ขนาดของจำนวนเชิงซ้อน |z|";var R=RN(s);ans=R.v;ct=MW(RH(R));pr="จงหาค่าของ "+MW("|"+z+"|");
     W=[{t:M(s),v:s,why:"ลืมถอดราก"},{t:M(Math.abs(a)+Math.abs(b)),v:Math.abs(a)+Math.abs(b),why:"บวกตรง ๆ ต้องใช้ √(a² + b²)"},Rv(RN(Math.abs(a*a-b*b)),"ใช้ a² − b² ต้องเป็น a² + b²"),{t:M(Math.abs(a)),v:Math.abs(a),why:"นี่คือขนาดของส่วนจริงอย่างเดียว"}];
     ex=MW("|"+V("z")+"| = ")+M(sqH(NP(a)+SUP(2)+" + "+NP(b)+SUP(2))+" = "+RH(R));}
-  else if(ask==="zz"){topic="z · z̄ = |z|²";ans=s;ct=M(s);pr="ถ้า "+MW(V("z")+" = "+z.replace(/<\/?span[^>]*>/g,""))+" จงหา "+MW(V("z")+" · "+V("z̄"));
+  else if(ask==="zz"){topic="z · z̄ = |z|²";ans=s;ct=M(s);pr="ถ้า "+MW(V("z")+" = "+z)+" จงหา "+MW(V("z")+" · "+V("z̄"));
     W=[{t:M(N(a*a-b*b)),v:a*a-b*b,why:"ใช้ i² = 1 ทำให้ได้ a² − b²"},Rv(RN(s),"นี่คือ |z| ส่วน z·z̄ = |z|²"),Cv(Q(a*a-b*b),Q(2*a*b),"นี่คือ z² ไม่ใช่ z·z̄"),{t:M(N(a*a)),v:a*a,why:"ลืมพจน์ของส่วนจินตภาพ"}];
     ex=MW(V("z")+V("z̄")+" = "+V("a")+SUP(2)+" + "+V("b")+SUP(2)+" = "+a*a+" + "+b*b+" = "+s);}
-  else if(ask==="conj"){topic="สังยุค (共轭复数)";ans=[a,-b];ct=cxI(a,-b);pr="จงหาสังยุคของ "+MW(V("z")+" = "+z.replace(/<\/?span[^>]*>/g,""));
+  else if(ask==="conj"){topic="สังยุค (共轭复数)";ans=[a,-b];ct=cxI(a,-b);pr="จงหาสังยุคของ "+MW(V("z")+" = "+z);
     W=[Cv(Q(-a),Q(b),"กลับเครื่องหมายส่วนจริงแทน ต้องกลับเฉพาะส่วนจินตภาพ"),Cv(Q(-a),Q(-b),"นี่คือ −z ไม่ใช่สังยุค"),Cv(Q(b),Q(a),"สลับส่วนจริงกับส่วนจินตภาพ"),Cv(Q(a),Q(b),"นี่คือ z เดิม")];
     ex="สังยุคคือกลับเครื่องหมายส่วนจินตภาพ: "+MW(V("z̄")+" = ")+ct;}
   else {var re=ask==="re2";topic=re?"ส่วนจริงของ z² (实部)":"ส่วนจินตภาพของ z² (虚部)";ans=re?a*a-b*b:2*a*b;ct=M(N(ans));
